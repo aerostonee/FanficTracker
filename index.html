@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanfic Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <h1>Fic Tracker</h1>
+            <p>Enter password to continue</p>
+    
+            <input
+                type="password"
+                id="password-input"
+                placeholder="Password"
+            />
+    
+            <button id="login-btn">Unlock</button>
+    
+            <p id="login-error" class="login-error"></p>
+        </div>
+    </div>
+
+    <div id="app" style="display:none;">
+
+    
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Fanfic Tracker</h1>
+        <nav class="nav">
+            <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+            <button class="nav-btn" data-page="Klance">Klance</button>
+            <button class="nav-btn" data-page="Merthur">Merthur</button>
+            <button class="nav-btn" data-page="Hollanov">Hollanov</button>
+            <button class="nav-btn" data-page="Drarry">Drarry</button>
+            <button class="nav-btn" data-page="Misc">Misc</button>
+
+
+            
+            <div class="nav-right">
+                <button class="nav-btn" data-page="manage-tags">Manage Tags</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <button class="btn-primary" id="add-fic-btn">+ Add Fanfic</button>
+            </div>
+            <div class="stats-card">
+                <h3>All Fanfics</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span>Total Fics:</span>
+                        <span class="stat-value" id="stat-total">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Read:</span>
+                        <span class="stat-value" id="stat-read">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Currently Reading:</span>
+                        <span class="stat-value" id="stat-reading">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>To Read:</span>
+                        <span class="stat-value" id="stat-toread">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Paused:</span>
+                        <span class="stat-value" id="stat-paused">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>DNF:</span>
+                        <span class="stat-value" id="stat-dnf">0</span>
+                    </div>
+                    <div class="stat-item stat-border">
+                        <span>Total Words Read:</span>
+                        <span class="stat-value" id="stat-words">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Favorites:</span>
+                        <span class="stat-value" id="stat-favorites">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Tags Page -->
+        <div id="manage-tags-page" class="page">
+            <div class="page-header">
+                <h2>Manage Tags</h2>
+                <button class="btn-primary" id="add-new-tag-btn">+ Add New Tag</button>
+            </div>
+
+            <div id="tags-management-container">
+                <!-- Tags will be listed here dynamically -->
+            </div>
+        </div>
+
+
+        <!-- Ship Pages -->
+        <div id="ship-page" class="page">
+            <div class="page-header">
+                <h2 id="ship-title"></h2>
+                <button class="btn-primary" id="add-ship-fic-btn">+ Add Fanfic</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters-card">
+                <h3 id="filters-title">Filters & Sort (0)</h3>
+
+                <div class="filters-grid">
+                    <input type="text" id="search-input" placeholder="Search title or author...">
+                    
+
+                    <select id="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="Read">Read</option>
+                        <option value="To Read">To Read</option>
+                        <option value="Reading">Reading</option>
+                        <option value="Paused">Paused</option>
+                        <option value="DNF">DNF</option>
+                    </select>
+
+                    <select id="rating-filter">
+                        <option value="">All Ratings</option>
+                        <option value="Favorite">Favorite</option>
+                        <option value="Amazing">Amazing</option>
+                        <option value="Great">Great</option>
+                        <option value="Good">Good</option>
+                        <option value="Fine">Fine</option>
+                        <option value="Bad">Bad</option>
+                        <option value="Terrible">Terrible</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+
+                    <select id="explicit-filter">
+                        <option value="">All Content</option>
+                        <option value="true">Explicit Only</option>
+                        <option value="false">Non-Explicit Only</option>
+                    </select>
+
+                    <select id="sort-by">
+                        <option value="date_read">Sort by Date Read</option>
+                        <option value="title">Sort by Title</option>
+                        <option value="author">Sort by Author</option>
+                        <option value="word_count">Sort by Word Count</option>
+                        <option value="rating">Sort by Rating</option>
+                        <option value="rereads">Sort by Rereads</option>
+                    </select>
+
+                    <div id="tag-filter-wrapper">
+                        <input id="tag-filter-input" type="text" placeholder="Filter tags...">
+                        <div id="tag-filter-suggestions"></div>
+                    </div>
+
+                    <button id="sort-dir-btn" class="btn-sort">↑ Ascending</button>
+                </div>
+            </div>
+
+            <!-- Fics List -->
+            <div id="fics-container"></div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add Fanfic</h2>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <form id="fic-form">
+                <div class="form-group">
+                    <label>Ship</label>
+                    <input list="ship-list" id="form-ship" required placeholder="Enter ship name">
+                        <datalist id="ship-list">
+                            <option value="Klance">
+                            <option value="Merthur">
+                            <option value="Hollanov">
+                            <option value="Drarry">
+                        </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" id="form-title" >
+                </div>
+
+                <div class="form-group">
+                    <label>AO3 Link *</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="url" id="form-link" required style="flex: 1;">
+                        <button type="button" id="fetch-ao3-btn" class="btn-primary" style="white-space: nowrap;">
+                            Fetch from AO3
+                        </button>
+                    </div>
+                
+                    <p id="duplicate-warning" style="color:red; display:none; font-size:0.8rem;">
+                        Fanfic already added
+                    </p>
+                
+                    <small style="color: #666; font-size: 0.75rem;">
+                        Paste an AO3 link and click "Fetch from AO3" to auto-fill details
+                    </small>
+                </div>
+                
+
+                <div class="form-group">
+                    <label for="form-html-source">AO3 Page Source</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input id="form-html-source" style="flex: 1;">
+                        <button type="button" id="parse-html-btn" class="btn-primary" style="white-space: nowrap;">Extract From Source Code</button>
+                    </div>
+                    <small style="color: #666; font-size: 0.75rem;">Faster than fetching — paste the full HTML from AO3’s View Source.
+                    </small>
+                    <button type="button" id="open-AO3-Page-btn" class="btn-primary" style="white-space: nowrap;">Open AO3 Page</button>
+            
+                  </div>
+                  
+
+                <div class="form-group">
+                    <label>Author *</label>
+                    <input type="text" id="form-author" >
+                </div>
+
+                <div class="form-group">
+                    <label>Summary</label>
+                    <textarea id="form-summary" rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Word Count</label>
+                        <input type="number" id="form-wordcount">
+                    </div>
+                    <div class="form-group">
+                        <label>Date Read</label>
+                        <input type="date" id="form-date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <select id="form-rating">
+                            <option value="N/A" selected>N/A</option>
+                            <option value="Terrible">Terrible</option>
+                            <option value="Bad">Bad</option>
+                            <option value="Fine">Fine</option>
+                            <option value="Good" >Good</option>
+                            <option value="Great">Great</option>
+                            <option value="Amazing">Amazing</option>
+                            <option value="Favorite">Favorite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="form-status">
+                            <option value="To Read">To Read</option>
+                            <option value="Reading">Reading</option>
+                            <option value="Paused">Paused</option>
+                            <option value="Read" selected>Read</option>
+                            <option value="DNF">DNF</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="form-explicit">
+                        Explicit Content
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" id="tag-search-input" placeholder="Search or create tag..." style="margin-bottom: 0.7rem;" />
+                    <div id="tags-container" class="tags-container"></div>
+                </div>
+
+                <div class="form-group" id="rereads-section" style="display:none;">
+                    <label>Rereads</label>
+                    <div id="rereads-list"></div>
+                    <button type="button" class="btn-secondary" id="add-reread-btn">
+                      + Add Reread
+                    </button>
+                  </div>
+                  
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-full">Done</button>
+                    <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
+</html>TEST
