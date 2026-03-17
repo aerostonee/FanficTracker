@@ -578,6 +578,7 @@ function getSelectedTags() {
 }
 
 function setSelectedTags(tags) {
+    selectedTags = [...tags]; // <--- make sure to update the global state
     document.querySelectorAll('.tag-btn').forEach(btn => {
         if (tags.includes(btn.dataset.tag)) {
             btn.classList.add('active');
@@ -648,6 +649,7 @@ async function handleFormSubmit(e) {
 
 async function editFic(id) {
     try {
+        // 1️⃣ Fetch the fic from Supabase
         const { data: fic, error } = await supabaseClient
             .from('fanfics')
             .select('*')
@@ -658,9 +660,10 @@ async function editFic(id) {
 
         editingFicId = id;
 
-        // ----- Basic modal setup -----
+        // 2️⃣ Set the modal title
         document.getElementById('modal-title').textContent = 'Edit Fanfic';
 
+        // 3️⃣ Fill basic form fields
         document.getElementById('form-ship').value = fic.ship;
         document.getElementById('form-title').value = fic.title;
         document.getElementById('form-link').value = fic.link;
@@ -672,45 +675,45 @@ async function editFic(id) {
         document.getElementById('form-status').value = fic.status;
         document.getElementById('form-date').value = fic.date_read || '';
 
-        setSelectedTags(fic.tags || []);
+        // 4️⃣ Set selected tags and render buttons
+        selectedTags = [...(fic.tags || [])]; // ✅ global array
+        renderTagsInModal();                 // ✅ render buttons correctly
 
-        // ----- REREADS -----
+        // 5️⃣ Setup rereads
         const rereadsSection = document.getElementById('rereads-section');
         const rereadsList = document.getElementById('rereads-list');
         const addRereadBtn = document.getElementById('add-reread-btn');
 
         let rereads = [...(fic.rereads || [])];
-
         rereadsSection.style.display = 'block';
 
         function renderRereads() {
             rereadsList.innerHTML = rereads.map((date, index) => `
                 <div class="reread-row">
                     <input type="date" value="${date}" data-index="${index}">
-                    <button type="button" class="btn-delete-reread" data-index="${index}">
-                        ✕
-                    </button>
+                    <button type="button" class="btn-delete-reread" data-index="${index}">✕</button>
                 </div>
             `).join('');
+
+            // Attach delete events
+            rereadsList.querySelectorAll('.btn-delete-reread').forEach(btn => {
+                btn.onclick = () => {
+                    const index = Number(btn.dataset.index);
+                    rereads.splice(index, 1);
+                    renderRereads();
+                };
+            });
         }
 
         renderRereads();
 
-        // Add reread (defaults to today)
+        // Add new reread (today)
         addRereadBtn.onclick = () => {
             rereads.push(getLocalDateString());
             renderRereads();
         };
 
-        // Delete reread
-        rereadsList.onclick = (e) => {
-            if (!e.target.classList.contains('btn-delete-reread')) return;
-            const index = Number(e.target.dataset.index);
-            rereads.splice(index, 1);
-            renderRereads();
-        };
-
-        // ----- Override submit to include rereads -----
+        // 6️⃣ Override submit to include rereads
         const form = document.getElementById('fic-form');
         const originalSubmit = form.onsubmit;
 
@@ -724,14 +727,15 @@ async function editFic(id) {
             const formData = {
                 ship: document.getElementById('form-ship').value,
                 title: document.getElementById('form-title').value,
-                link: document.getElementById('form-link').value,
+                link: normalizeAO3Link(document.getElementById('form-link').value),
                 author: document.getElementById('form-author').value,
                 summary: document.getElementById('form-summary').value,
                 word_count: parseInt(document.getElementById('form-wordcount').value) || 0,
                 explicit: document.getElementById('form-explicit').checked,
-                tags: getSelectedTags(),
+                tags: [...selectedTags],        // ✅ use selectedTags
                 rating: document.getElementById('form-rating').value,
                 status: document.getElementById('form-status').value,
+                date_read: document.getElementById('form-date').value,
                 rereads: updatedRereads
             };
 
@@ -749,9 +753,10 @@ async function editFic(id) {
             closeModal();
             loadShipFics(currentShip);
 
-            form.onsubmit = originalSubmit; // restore
+            form.onsubmit = originalSubmit; // restore original submit
         };
 
+        // 7️⃣ Show modal
         document.getElementById('modal').classList.add('active');
 
     } catch (error) {
